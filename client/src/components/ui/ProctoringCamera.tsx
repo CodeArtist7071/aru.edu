@@ -1,0 +1,89 @@
+import React, { useEffect, useRef, useState } from "react";
+import * as tf from "@tensorflow/tfjs";
+import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detection";
+
+export default function ProctoringCamera() {
+  const videoRef = useRef<any>(null);
+  const canvasRef = useRef<any>(null);
+
+  const [warning, setWarning] = useState("");
+  const [model, setModel] = useState(null);
+
+  useEffect(() => {
+    startCamera();
+    loadModel();
+  }, []);
+
+  const startCamera = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+    });
+
+    videoRef.current.srcObject = stream;
+  };
+
+  const loadModel = async () => {
+    await tf.setBackend("webgl");
+    const loadedModel =
+      await faceLandmarksDetection.load(
+        faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
+      );
+    setModel(loadedModel);
+  };
+
+  useEffect(() => {
+    if (model) {
+      detect();
+    }
+  }, [model]);
+
+  const detect = async () => {
+    if (
+      videoRef.current &&
+      videoRef.current.readyState === 4
+    ) {
+      const predictions = await model.estimateFaces({
+        input: videoRef.current,
+      });
+
+      if (predictions.length === 0) {
+        setWarning("No face detected 🚨");
+      } else if (predictions.length > 1) {
+        setWarning("Multiple faces detected 🚨");
+      } else {
+        const keypoints = predictions[0].scaledMesh;
+
+        // Example: simple left-right head movement detection
+        const leftEye = keypoints[33];
+        const rightEye = keypoints[263];
+
+        const eyeDiff = Math.abs(leftEye[0] - rightEye[0]);
+
+        if (eyeDiff < 40) {
+          setWarning("Looking sideways suspiciously 👀");
+        } else {
+          setWarning("");
+        }
+      }
+    }
+
+    requestAnimationFrame(detect);
+  };
+
+  return (
+    <div className="relative">
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        className="w-72 rounded-lg border border-slate-300"
+      />
+
+      {warning && (
+        <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-3 py-1 rounded-lg">
+          {warning}
+        </div>
+      )}
+    </div>
+  );
+}

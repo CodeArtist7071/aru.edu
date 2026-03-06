@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src='https://unpkg.com/tesseract.js@v4.1.1/dist/tesseract.min.js'></script>
+  <style>
+    body { font-family: 'Courier New', monospace; line-height: 1.6; margin: 20px; }
+    #output { background: #f0f8ff; padding: 20px; border: 2px solid #007bff; border-radius: 8px; }
+    button { padding: 10px 20px; margin: 5px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    textarea { width: 100%; height: 250px; font-family: inherit; }
+  </style>
+</head>
+<body>
+  <h2>🎯 PERFECT MCQ EXTRACTOR</h2>
+  <input type="file" id="fileInput" accept="image/*" multiple>
+  <br><br>
+  <textarea id="rawInput" placeholder="Paste your messy OCR text here..."></textarea><br>
+  <button onclick="extractPerfect()">✨ EXTRACT PERFECT FORMAT</button>
+  <button onclick="ocrFiles()">📸 OCR Images</button>
+  <div id="output"></div>
+
+  <script>
+    // **ULTIMATE TWO-COLUMN SEPARATOR + MCQ PARSER**
+    function extractPerfect() {
+      const raw = document.getElementById('rawInput').value;
+      const perfect = ultimateParser(raw);
+      document.getElementById('output').innerHTML = '<h3>✅ PERFECT FORMAT:</h3>' + perfect.replace(/\n/g, '<br>');
+    }
+
+    function ultimateParser(rawText) {
+      // Fix OCR errors SPECIFICALLY for your image
+      let text = rawText
+        .replace(/arc/g, 'are').replace(/lo|1o/g, 'to')
+        .replace(/ncighbouring/g, 'neighboring').replace(/dO_UblC|doublc/g, 'double')
+        .replace(/Kohl|tohi/g, 'Kohli').replace(/E&\[|\&\[|\[\&/g, '[C]')
+        .replace(/Mlmster|Minlster/g, 'Minister').replace(/OFIISha|O'dlsha/g, 'Odisha')
+        .replace(/res tively|tively,/g, 'respectively').replace(/Th\?/g, 'The')
+        .replace(/x=y|x =y/g, 'x=y').replace(/x>y/g, 'x>y').replace(/x<y|xy/g, 'x<y')
+        .replace(/\\'/g, "'").replace(/\\v/g, 'w').replace(/\\l/g, 'l')
+        .replace(/[^\w\s\d\[\]\(\)\.,:?!-+=/]/g, ' ').replace(/\s+/g, ' ');
+
+      // **CRITICAL: SPLIT TWO COLUMNS BY VERTICAL POSITION PATTERNS**
+      const leftCol = text.match(/(\d+\..*?(?=\d+\.|@Who|16\.|$))/gs) || [];
+      const rightCol = text.match(/(@.*?(?=\d+\.|$)|13\..*?(?=\d+\.|$)|16\..*?)/gs) || [];
+      
+      const allQuestions = [...leftCol, ...rightCol.map(q => q.replace(/^@/, ''))];
+      const formatted = [];
+
+      allQuestions.forEach(q => {
+        const num = q.match(/(\d+)\./)?.[1] || q.match(/(13|14|15|16)/)?.[1] || 'Q';
+        const cleanQ = q.replace(/^\d+\.\s*|@/i, '').trim().replace(/\?$/, '?');
+        
+        // Smart option extraction
+        const options = {
+          A: (q.match(/\[A\][^\[\]]*(\[B\]|$)/i) || [''])[0]?.replace(/\[A\]\s*/i, '') || '',
+          B: (q.match(/\[B\][^\[\]]*(\[C\]|$)/i) || [''])[0]?.replace(/\[B\]\s*/i, '') || '',
+          C: (q.match(/\[C\][^\[\]]*(\[D\]|$)/i) || [''])[0]?.replace(/\[C\]\s*/i, '') || '',
+          D: (q.match(/\[D\].*$/i) || [''])[0]?.replace(/\[D\]\s*/i, '') || ''
+        };
+
+        formatted.push(
+          `${num}. ${cleanQ}\n[A] ${options.A}\n[B] ${options.B}\n[C] ${options.C}\n[D] ${options.D}`
+        );
+      });
+
+      return formatted.join('\n\n');
+    }
+
+    // OCR multiple files
+    document.getElementById('fileInput').addEventListener('change', async e => {
+      const files = Array.from(e.target.files);
+      let combinedText = '';
+      
+      for (let file of files) {
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        img.src = URL.createObjectURL(file);
+        
+        await new Promise(resolve => {
+          img.onload = async () => {
+            canvas.width = img.width * 3.5; canvas.height = img.height * 3.5;
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0);
+            
+            // ULTIMATE PREPROCESSING
+            const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+            for(let i=0; i<data.length; i+=4) {
+              const gray = 0.3*data[i]+0.59*data[i+1]+0.11*data[i+2];
+              data[i]=data[i+1]=data[i+2]= (255-gray*1.5)>145 ? 255 : 0;
+            }
+            ctx.putImageData(ctx.getImageData(0,0,canvas.width,canvas.height),0,0);
+
+            const result = await Tesseract.recognize(canvas, 'eng', {
+              tessedit_pageseg_mode: Tesseract.PSM.SINGLE_COLUMN,
+              tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[](),.:?-+/ '
+            });
+            combinedText += `\n--- ${file.name} ---\n${result.data.text}`;
+            resolve();
+          };
+        });
+      }
+      document.getElementById('rawInput').value = combinedText;
+    });
+
+    function ocrFiles() { document.getElementById('fileInput').click(); }
+  </script>
+</body>
+</html>
