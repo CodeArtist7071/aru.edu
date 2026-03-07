@@ -27,10 +27,12 @@ export class DriveController {
     try {
       const result = await this.driveService.processPDF(fileId,fileName);
 
+
       return {
         status: 'success',
         fileName,
-        extractedText: result.extractedText,
+        columns:result.columns,
+        extractedText:result.extractedText,
         questions: result.questions,
       };
     } catch (error:any) {

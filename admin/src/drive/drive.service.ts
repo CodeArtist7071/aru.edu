@@ -1,10 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { google } from "googleapis";
+import * as fsPromises from "fs/promises";
 import * as fs from "fs";
 import * as path from "path";
 import { PdfService } from "../pdf/pdf.service";
 import { OcrService } from "../ocr/ocr.service";
 import { QuestionService } from "../question/question.service";
+import { ColumnService } from "../question/column.service";
+import { execSync } from "child_process";
 
 @Injectable()
 export class DriveService {
@@ -14,7 +17,24 @@ export class DriveService {
     private pdfService: PdfService,
     private ocrService: OcrService,
     private questionService: QuestionService,
+    private columnService: ColumnService,
   ) {
+    // DEBUG: Verify credentials file exists
+    const credentialsPath = path.join(
+      process.cwd(),
+      "src/config/credentials.json",
+    );
+    console.log("✅ CWD:", process.cwd());
+    console.log("✅ Credentials path:", credentialsPath);
+    console.log("✅ File exists:", fs.existsSync(credentialsPath));
+
+    if (!fs.existsSync(credentialsPath)) {
+      throw new Error(`❌ Missing credentials.json at ${credentialsPath}`);
+    }
+
+    const stats = fs.statSync(credentialsPath);
+    console.log("✅ File size:", stats.size, "bytes");
+
     const auth = new google.auth.GoogleAuth({
       keyFile: path.join(process.cwd(), "src/config/credentials.json"),
       scopes: ["https://www.googleapis.com/auth/drive.readonly"],
@@ -51,64 +71,84 @@ export class DriveService {
         .on("error", reject);
     });
   }
-  // async processPDF(fileId: string, fileName: string) {
-  //   const pdfPath = await this.downloadPDF(fileId, fileName);
-  //   const pdfName = path.basename(pdfPath, ".pdf");
+ 
+  /** 🔥 NEW: Cleanup temp images after processing */
+  async cleanupImages(imageDir: string): Promise<void> {
+    try {
+      // ✅ Node.js 18+ CORRECT syntax
+      await fsPromises.rm(imageDir, {
+        recursive: true, // ✅ Valid in fs.rm
+        maxRetries: 3, // ✅ Retry on failure
+        force: true, // ✅ Ignore missing dirs
+      });
+      console.log(`🗑️ Cleaned up: ${imageDir}`);
+    } catch (error) {
+      console.warn(`⚠️ Cleanup failed for ${imageDir}:`, error);
+    }
+  }
 
-  //   // Convert PDF → Images
-  //   await this.pdfService.convertPDFToImages(pdfPath);
-
-  //   // Run OCR
-  //   const extractedText = await this.ocrService.extractTextFromImages(pdfName);
-
-  //   // Extract structured questions
-  //   const questions = this.questionService.parseTextToQuestions(extractedText);
-
-  //   return { extractedText, questions };
-  // }
-
-  // async processPDF(pdfPath: string) {
-  //   const folderName = path.basename(pdfPath, ".pdf");
-
-  //   // 1️⃣ Convert PDF to images
-  //   await this.pdfService.convertPDFToImages(pdfPath);
-
-  //   // 2️⃣ Extract OCR text
-  //   const extractedText =
-  //     await this.ocrService.extractTextFromImages(folderName);
-
-  //   // 3️⃣ Parse structured questions
-  //   const questions = this.questionService.parseTextToQuestions(extractedText);
-
-  //   console.log(`OCR + Parsing complete for PDF: ${folderName}`);
-  //   return { pdf: folderName, questions, extractedText: extractedText };
-  // }
 
   async processPDF(fileId: string, fileName: string) {
+    const heartbeat = setInterval(() => {
+      console.log("💓 HEARTBEAT - Still processing...");
+    }, 30000);
+
+    const timeout = setTimeout(() => {
+      console.error("⏰ TIMEOUT - Killing hanging processes");
+      try {
+        execSync("taskkill /f /im pdftoppm.exe /t", { stdio: "ignore" });
+      } catch {}
+    }, 600000); // 10 minutes (30 pages safe)
+
     try {
-      // Step 1: Download PDF locally
-      const filePath: string = await this.downloadPDF(
-        fileId,
-        fileName,
+      console.log("📥 Step 1: Google Drive download...");
+      const filePath: string = await this.downloadPDF(fileId, fileName);
+
+      console.log("📄 Step 2: PDF → Images...");
+      const folderName = path.basename(filePath, ".pdf");
+      const imageDir = await this.pdfService.convertPDFToImages(filePath);
+
+      console.log("🔍 Step 3: Column detection...");
+      const columns = await this.columnService.detectAllColumns(imageDir);
+
+      console.log("🔎 Step 4: OCR columns...");
+      const pageTexts: string[] = [];
+
+
+
+      let extractedText = pageTexts.join("\n\n");
+
+  
+
+      console.log("❓ Step 6: Question parsing...");
+      const questions = this.questionService.parseTextToQuestions(
+        extractedText,
+        columns,
       );
-      // filePath example: 'src/uploads/OSSCCGLPrelimsOfficial.pdf'
 
-      // Step 2: Convert PDF → Images
-      const folderName = path.basename(filePath, ".pdf"); // OSSCCGLPrelimsOfficial
-      await this.pdfService.convertPDFToImages(filePath);
+      console.log("🗑️ Step 7: Cleanup...");
+      await this.cleanupImages(imageDir);
 
-      // Step 3: OCR images → text
-      const extractedText: string =
-        await this.ocrService.extractTextFromImages(folderName);
+      console.log("🎉 Step 8: SUCCESS!");
 
-      // Step 4: Parse questions
-      const questions =
-        this.questionService.parseTextToQuestions(extractedText);
-
-      return { pdf: folderName, extractedText, questions };
+      return {
+        pdf: folderName,
+        extractedText,
+        questions,
+        columns: columns.map((c) => ({
+          page: c.pageNum,
+          confidence: c.confidence,
+        })),
+      };
     } catch (err) {
-      console.error("Error processing PDF:", err);
+      console.error("❌ Error processing PDF:", err);
       throw err;
+    } finally {
+      // 🔥 CRITICAL FIX
+      clearInterval(heartbeat);
+      clearTimeout(timeout);
+
+      console.log("🧹 Timers cleared");
     }
   }
 }
