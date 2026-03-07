@@ -10,7 +10,7 @@ export class OcrService {
   private hf: InferenceClient;
 
   constructor(private configService: ConfigService) {
-    const token = "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";
+    const token = "HF_API_TOKEN";
 
     if (!token) {
       throw new Error('HF_API_TOKEN is not set in environment variables');
