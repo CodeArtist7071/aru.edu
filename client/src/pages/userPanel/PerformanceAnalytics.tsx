@@ -1,12 +1,8 @@
-import { Bell, Download, History, Share, TrendingUp } from 'lucide-react';
+import { Bell, Book, CheckCircle, Download, FileWarning, History, Pen, Share, TrendingUp } from 'lucide-react';
 import React from 'react';
 
 const PerformanceAnalytics = () => {
-  const MaterialIcon = ({ name, className = "material-symbols-outlined", size = "20px" }) => (
-    <span className={`${className} font-normal leading-none`} style={{ fontSize: size }}>
-      {name}
-    </span>
-  );
+
 
   const stats = [
     {
@@ -110,7 +106,7 @@ const PerformanceAnalytics = () => {
       <header className="flex items-center justify-between border-b border-slate-200 bg-white/90 px-6 md:px-20 py-4 sticky top-0 z-50 dark:border-slate-800 dark:bg-slate-900/90 backdrop-blur-md shadow-sm">
         <div className="flex items-center gap-4 text-[#1a57db]">
           <div className="size-8 flex items-center justify-center bg-[#1a57db]/10 rounded-lg">
-            <MaterialIcon name="analytics" className="text-[#1a57db]" />
+            
           </div>
           <h2 className="text-lg font-black leading-tight tracking-tight text-slate-900 dark:text-slate-100">
             EduMetrics Pro
@@ -159,7 +155,7 @@ const PerformanceAnalytics = () => {
               >
                 <div className="flex items-center justify-between">
                   <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">{stat.label}</p>
-                  <MaterialIcon name={stat.icon} className={stat.iconColor} />
+                  {stat.icon}
                 </div>
                 <p className={`text-4xl font-black text-slate-900 dark:text-slate-100 ${stat.value.includes('/') ? 'leading-tight' : ''}`}>
                   {stat.value}
@@ -229,7 +225,7 @@ const PerformanceAnalytics = () => {
             {/* AI Insights */}
             <div className="flex flex-col gap-6 p-10 bg-gradient-to-br from-slate-900/95 to-slate-800/95 text-white rounded-3xl border border-slate-800/50 shadow-2xl backdrop-blur-xl">
               <div className="flex items-center gap-3">
-                <MaterialIcon name="auto_awesome" className="text-[#1a57db]" size="28px" />
+                <Book className="text-[#1a57db]" size="28px" />
                 <h3 className="text-xl font-black">AI Improvement Plan</h3>
               </div>
               <div className="flex flex-col gap-4">
@@ -275,7 +271,7 @@ const PerformanceAnalytics = () => {
                           <div className={`size-12 rounded-2xl flex items-center justify-center shadow-lg ${
                             `bg-${subject.color}-100 dark:bg-${subject.color}-900/30 text-${subject.color}-600`
                           }`}>
-                            <MaterialIcon name={subject.icon} />
+                            {subject.icon}
                           </div>
                           <span className="font-black text-xl text-slate-900 dark:text-slate-100">{subject.subject}</span>
                         </div>
@@ -307,7 +303,7 @@ const PerformanceAnalytics = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="flex flex-col gap-6">
               <h3 className="text-2xl font-black flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                <MaterialIcon name="check_circle" className="text-green-600" size="28px" />
+                <CheckCircle className="text-green-600" size="28px" />
                 Strongest Chapters
               </h3>
               <div className="flex flex-col gap-4">
@@ -331,7 +327,7 @@ const PerformanceAnalytics = () => {
 
             <div className="flex flex-col gap-6">
               <h3 className="text-2xl font-black flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                <MaterialIcon name="warning" className="text-red-600" size="28px" />
+                <FileWarning className="text-red-600" size="28px" />
                 Focus Areas (Weak Chapters)
               </h3>
               <div className="flex flex-col gap-4">
@@ -358,7 +354,7 @@ const PerformanceAnalytics = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 p-12 bg-gradient-to-r from-[#1a57db]/10 to-[#1a57db]/5 border border-[#1a57db]/20 rounded-3xl mb-16 shadow-2xl">
             <div className="flex items-center gap-8">
               <div className="size-20 rounded-2xl bg-white/80 dark:bg-slate-800/80 flex items-center justify-center shadow-2xl backdrop-blur-md">
-                <MaterialIcon name="psychology" className="text-4xl text-[#1a57db]" />
+                <Pen  className="text-4xl text-[#1a57db]" />
               </div>
               <div>
                 <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Ready to master the concepts?</h3>
