@@ -10,6 +10,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Ignore config file
+doc_pipeline/config.py
+
+# Ignore secret JSON files
+doc_pipeline/credentials.json
+doc_pipeline/google-vision-ocr.json
+
 # Environment variables
 .env
 .env.local

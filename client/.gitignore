@@ -12,12 +12,7 @@ dist
 dist-ssr
 *.local
 
-# Ignore config file
-doc_pipline/config.py
 
-# Ignore secret JSON files
-credentials.json
-google-vision-ocr.json
 
 # Editor directories and files
 .vscode/*
