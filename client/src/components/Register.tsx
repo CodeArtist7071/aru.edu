@@ -48,7 +48,7 @@ const Register = () => {
     phone:details.phone,
     password:details.confirm_password,
     options:{
-      emailRedirectTo:"https://aru-dvxcxpbv0-yogeshwars-projects-89078748.vercel.app/login",
+      emailRedirectTo:"https://aru-edu.artististysn.workers.dev/login",
     }
    })
    if(data.user?.aud === "authenticated"){
