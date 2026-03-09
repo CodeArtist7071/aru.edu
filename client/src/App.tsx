@@ -20,6 +20,7 @@ import { fetchExams } from "./slice/examSlice";
 import Exam from "./components/Exam";
 import { UserDashboardLayout } from "./layouts/UserDashboardLayout";
 import PracticeTest from "./components/ui/PracticeTest";
+import ConfirmOAuthPage from "./components/ConfirmOAuth";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -112,6 +113,7 @@ function App() {
         <Route path="performance" element={<PerformanceAnalytics />} />
         <Route path="study-planner" element={<StudyPlanner />} />
         <Route path="mock-tests" element={<MockTests />} />
+        <Route path="confirm-oauth" element={<ConfirmOAuthPage />} />
         <Route path="results" element={<Results />} />
       </Route>
     </Routes>
@@ -119,3 +121,4 @@ function App() {
 }
 
 export default App;
+

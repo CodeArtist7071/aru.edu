@@ -73,6 +73,22 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: "https://aru-edu.artististysn.workers.dev/confirm-oauth", // change for prod
+    },
+  });
+
+  if (error) {
+    console.error("Google login error:", error.message);
+    return;
+  }
+
+  console.log("Redirecting to Google login...", data);
+};
+
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
       {/* Main Content */}
@@ -137,7 +153,7 @@ const Login = () => {
 
             {/* Google Login */}
             <div className="grid grid-cols-1 gap-3">
-              <button className="flex items-center justify-center gap-3 w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+              <button onClick={handleGoogleSignIn} className="flex items-center justify-center gap-3 w-full px-4 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
