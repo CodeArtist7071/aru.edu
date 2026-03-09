@@ -81,7 +81,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route index path="/aru.edu/" element={<HomePage />} />
 
       {/* Public Routes */}
       <Route
