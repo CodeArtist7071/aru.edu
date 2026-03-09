@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "aruedu",
+  "private_key_id": "a571a99919c03916169be265603445797aa3bea0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDNulLUlG/To7rq\nfqqoKyRHEMzRQ81vksAkvfyY6pi1NJ8HpRSuAOpZi+cpnuGJXtOzD0HFuV3EIN88\n+Q899yff5+/dOW6HisbHSOGSjGSr7GhtntfmF/fdKbXz8ObP6aOHa0su7SYBF4Rn\nzhNs03a7lz0YfdwSt3Ogi03X6raXc5Jb30/h3lwKsLREpMhlvu4KoJwTCbDl0719\nPk5WFLPaCDvzR3n+4otjaNuj2M/k97k3BGmXnURs2/kga2ZyZmwFeae6l7J1Oor4\n3Nhf/yLY5r4DMx6Z0kmuh19xnlrVIWZQjdB9kHhBHCw8BcwajYr+YcfmtFWQhMVr\nRqDa0KC/AgMBAAECggEAShzhAR8WaBZ4XEjUfu/Hymg1eP/ljte9q57b1FTTPZhe\n4Biq6gJ/alH5rWdE1cGZH00UQ0BDlMfI1ETfJlIXBdUe9sHdXSvz71AEn1A/ZiYs\n+qy6F3S0APMpTt+OrwD6veq7s4SQZ91KgEDfg5lskSjrRBr3QLDhEUmN+gZe0BEX\nos41ozNz7scK6LtNhWNv1lk6q1Nh5OB9sxhpRB/KAGKdXtm6exyxGeQ5SNElmyFE\nJRBOrPDHcZkLyh8nJcAyWK7BkOlnfHcrnkYD+bCdPGhPqXQhMVIU9sCOSZKyI9R8\nwb3HYso3h0Yyd0KwhKjyDQ/XxMNvEHKH07b0Hiw+nQKBgQDnDdGLmRygUXtxL9RG\ng/B3t9jLp7KTIVKwWmeHYnyVgc857BDScFTqQXSIhJqbXtMHpa6DUYEXpBCADOrk\nJhS+64uyl37hVolEm3xzqAwF4OGbKU14HP7U0p1Zw/FdTHiRpxxrEv/Ne2rgMYlO\n9Jy6KwHzRH8Dq2aEVN+096+4IwKBgQDj8IG1BgWgOQ8prarRxv3yc7XUpyZ2AB2B\nZnSOdszq6JS4sPjNSuP1tplM6fdYrWLImw/0G2Iixafl4oISqJ9gcSJMxkqOJL3B\nHVX1rXlpPSkYtF8TO8feF9JwIm8xejWuebd5Q4jGeJRX510jcecBgBAFmC6AYAz7\n0FHxHh3QtQKBgQCSYX7QIkCwkO7T1ql1w0Ell6QR4jyQWhw4/g15CDxFu+e9moFN\n0Tz67F0X4GrS5FBuF9ln+MsAX0DU31oxEK80BaaLjs8jk9+DR76gx2ZWkxJbat9Z\nqYUI8CYgKLNRmJEKNgUbEP5fAEHFp5yGGRLyHy0tIcgWWxCn5d2UmRcKYQKBgCxS\nDHZtaFSiI5+gBBHsFl65PwbNRX42QYZyrIEy+l9Gv/w1dPs975tMWPyKlaypcga9\nl9mIJYnLUv0xEMed//dZqCizebWv0TGmiZtOksfyu3XxRHdR7Wfyy9k/6Mz/DUcS\npakvh33H3lhFRWfp8tfo1bSwxYHyqzOfav9uMq/tAoGACX5Tlh1gcrd98y3Dbypu\nAMQFQEe07vjo/MWnt1zKdpLPAb3MwsInDJWczvAUQaHs11eNhLWP8e/7tQjbTLLX\n8qjcYfnr4TpaLNXkHZP+9qrGKtKogQ3rNnVJVFKWoZD+grmFdnK3RrGCNkO2v0ht\n0M9+2tJ/Xf1on7Y0Eu1pUdc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "webclient@aruedu.iam.gserviceaccount.com",
+  "client_id": "109602535542145248294",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/webclient%40aruedu.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
