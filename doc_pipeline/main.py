@@ -139,41 +139,20 @@ OPTION_PATTERN = re.compile(
 )
 
 
-def normalize_options(lines):
-
-    options = []
-    current_option = None
-
-    for line in lines:
-
-        if OPTION_PATTERN.match(line.strip()):
-
-            if current_option:
-                options.append(current_option.strip())
-
-            current_option = line
-
-        else:
-
-            if current_option:
-                current_option += " " + line
-
-    if current_option:
-        options.append(current_option.strip())
-
-    return options
-
-
 def cluster_to_text(cluster):
-
+    
+    # cluster["content"] contains both the question and the option blocks
     lines = cluster["content"]
+    
+    # We simply join them. We can optionally format options but it's 
+    # safer to just return the full text and let qwen_parser handle it.
+    # Joining with space and then adding newlines where options likely occur.
+    full_text = "\n".join(lines)
+    
+    # Make sure options are on newlines so the parser can identify them
+    full_text = re.sub(r'\s+(\(?[A-Da-d]\)|[A-Da-d][\)\.\:]|\(?[1-4]\)|[1-4][\)\.\:])\s', r'\n\1 ', full_text)
 
-    options = normalize_options(lines)
-
-    if options:
-        return "\n".join(options)
-
-    return "\n".join(lines)
+    return full_text
 
 
 
@@ -329,21 +308,29 @@ def process_pdf(pdf_path):
                     json_data = parse_to_json(cluster_text)
 
                     log(f"Parser returned type: {type(json_data)}")
+                    
+                    # Extract the questions list whether it's wrapped in a dict or standalone
+                    if isinstance(json_data, dict) and "questions" in json_data:
+                        parsed_questions = json_data["questions"]
+                    elif isinstance(json_data, list):
+                        parsed_questions = json_data
+                    else:
+                        parsed_questions = []
 
-                    if isinstance(json_data, list):
+                    if isinstance(parsed_questions, list) and len(parsed_questions) > 0:
 
-                        log(f"{len(json_data)} questions parsed from cluster")
+                        log(f"{len(parsed_questions)} questions parsed from cluster")
 
-                        for q in json_data:
+                        for q in parsed_questions:
                             q["diagram_present"] = cluster.get("diagram", False)
 
-                        all_questions.extend(json_data)
+                        all_questions.extend(parsed_questions)
 
                         log(f"Total accumulated questions: {len(all_questions)}")
 
                     else:
 
-                        log("Parser output not a list. Cluster skipped.")
+                        log("Parser output empty or not a list. Cluster skipped.")
 
                 except Exception as e:
 
@@ -368,6 +355,28 @@ def process_pdf(pdf_path):
 
     log("Saved OCR text to outputs/raw_text.txt")
     log(f"Total debug text length: {len(debug_text)} characters")
+
+    # --------------------------
+    # VALIDATE OUTPUT
+    # --------------------------
+    log("Validating parsed question list")
+
+    if not isinstance(all_questions, list):
+
+        log("Invalid JSON output from parser")
+        return
+
+    log(f"Total questions extracted: {len(all_questions)}")
+
+    # --------------------------
+    # SAVE QUESTIONS JSON
+    # --------------------------
+    log("Saving questions JSON")
+
+    with open("outputs/questions.json", "w", encoding="utf-8") as f:
+        json.dump(all_questions, f, indent=2)
+
+    log("Questions saved to outputs/questions.json")
 
     # --------------------------
     # DETECT EXAM + SUBJECT
@@ -398,28 +407,6 @@ def process_pdf(pdf_path):
 
     log(f"Resolved exam_id: {exam_id}")
     log(f"Resolved subject_id: {subject_id}")
-
-    # --------------------------
-    # VALIDATE OUTPUT
-    # --------------------------
-    log("Validating parsed question list")
-
-    if not isinstance(all_questions, list):
-
-        log("Invalid JSON output from parser")
-        return
-
-    log(f"Total questions extracted: {len(all_questions)}")
-
-    # --------------------------
-    # SAVE QUESTIONS JSON
-    # --------------------------
-    log("Saving questions JSON")
-
-    with open("outputs/questions.json", "w", encoding="utf-8") as f:
-        json.dump(all_questions, f, indent=2)
-
-    log("Questions saved to outputs/questions.json")
 
     # --------------------------
     # PUSH TO SUPABASE

@@ -129,32 +129,34 @@ def detect_exam_board_and_subject(text):
     return subject_id, exam_id
 
 
+def fetch_chapters_by_subject(subject_id):
+    if not subject_id:
+        return []
+    
+    res = supabase.table("chapters").select("id,name").eq("subject_id", subject_id).execute()
+    return res.data
+
+
 def clean_ocr_text(text):
 
     print("\n[PARSER] Cleaning OCR text")
 
     subject_id, exam_id = detect_exam_board_and_subject(text)
 
-    replacements = {
-        "(A)": "A.",
-        "(B)": "B.",
-        "(C)": "C.",
-        "(D)": "D.",
-        "A)": "A.",
-        "B)": "B.",
-        "C)": "C.",
-        "D)": "D."
-    }
+    # Comprehensive Regex cleanup for A/B/C/D option variants
+    # Converts combinations like ( a ), a ), a., etc., gracefully into standard "A.", "B.", etc.
+    # Note: re.sub is done individually to prevent matching accidental words
+    text = re.sub(r'(?im)(?<=\n|\s)\(\s*[Aa]\s*\)', '\nA. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)\(\s*[Bb]\s*\)', '\nB. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)\(\s*[Cc]\s*\)', '\nC. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)\(\s*[Dd]\s*\)', '\nD. ', text)
 
-    for k, v in replacements.items():
-        text = text.replace(k, v)
+    text = re.sub(r'(?im)(?<=\n|\s)[Aa]\s*[\)\.]', '\nA. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)[Bb]\s*[\)\.]', '\nB. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)[Cc]\s*[\)\.]', '\nC. ', text)
+    text = re.sub(r'(?im)(?<=\n|\s)[Dd]\s*[\)\.]', '\nD. ', text)
 
-    text = re.sub(r"\nA\s+", "\nA. ", text)
-    text = re.sub(r"\nB\s+", "\nB. ", text)
-    text = re.sub(r"\nC\s+", "\nC. ", text)
-    text = re.sub(r"\nD\s+", "\nD. ", text)
-
-    text = re.sub(r"Page\s*\d+", "", text)
+    text = re.sub(r"(?i)Page\s*\d+", "", text)
     text = re.sub(r"\n{2,}", "\n", text)
 
     if "1." in text:
@@ -246,16 +248,17 @@ def detect_question_blocks(text):
 
     questions = []
 
-    option_pattern = r"A[\.\)\:]?\s.*B[\.\)\:]?\s.*C[\.\)\:]?\s.*D[\.\)\:]?"
+    # Detect the presence of structured options A, B, C, D (case insensitive)
+    option_pattern = r"[Aa][\.\)\:]?\s.*?[Bb][\.\)\:]?\s.*?[Cc][\.\)\:]?\s.*?[Dd][\.\)\:]?"
 
     for block in blocks:
 
         block = block.strip()
 
-        if len(block) < 40:
+        if len(block) < 20:
             continue
 
-        if re.search(option_pattern, block, re.DOTALL):
+        if re.search(option_pattern, block, re.DOTALL | re.IGNORECASE):
             questions.append(str(block))
 
     return questions
@@ -394,6 +397,11 @@ def parse_to_json(text):
     print("[PARSER] Blocks for LLM:", len(question_blocks))
 
     chunks = chunk_questions(question_blocks, chunk_size=8)
+    
+    chapters_data = fetch_chapters_by_subject(subject_id)
+    chapters_prompt_block = ""
+    if chapters_data:
+        chapters_prompt_block = "\nAvailable Chapters:\n" + "\n".join([f"- ID: {c['id']}, Name: {c['name']}" for c in chapters_data])
 
     llm_questions = []
 
@@ -408,10 +416,11 @@ def parse_to_json(text):
 Extract MCQ questions from the text.
 
 Rules:
-- Only MCQs
-- Must contain A B C D
-- Do NOT invent questions
-- Return ONLY JSON
+- Only MCQs. Do NOT invent questions.
+- Must contain EXACTLY 4 options: A B C D. You must explicitly organize, split, or correct the provided options to strictly ensure exactly 4 options exist.
+- CORRECT ANSWER: You MUST solve the question yourself to determine the `correct_answer`. Focus heavily on evaluating mathematical questions accurately by checking against the 4 options. Output ONLY the correct option letter (A, B, C, or D).
+- CHAPTER MAPPING: Determine the most relevant topic/chapter for the question. Match the topic conceptually to a chapter from the 'Available Chapters' list below. Set `chapter_id` to that chapter's exact ID. If no chapters are provided or none match, set to null.
+- Return ONLY JSON.
 
 FORMAT:
 
@@ -424,9 +433,11 @@ FORMAT:
      "C": "",
      "D": ""
    }},
-   "correct_answer": ""
+   "correct_answer": "",
+   "chapter_id": ""
  }}
 ]
+{chapters_prompt_block}
 
 TEXT:
 {chunk_text}
@@ -441,8 +452,8 @@ TEXT:
         if parsed:
             llm_questions.extend(parsed)
 
-    # STEP 3 — MERGE RESULTS
-    all_questions = regex_questions + llm_questions
+    # STEP 3 — MERGE RESULTS (Prioritizing LLM solving over pure regex)
+    all_questions = llm_questions + regex_questions
 
     # STEP 4 — REMOVE DUPLICATES
     all_questions = deduplicate_questions(all_questions)

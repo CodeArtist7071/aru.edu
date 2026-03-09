@@ -43,6 +43,7 @@ def extract_blocks(annotation):
             vertices = block.bounding_box.vertices
 
             blocks.append({
+                "type": block.block_type,
                 "text": text.strip(),
                 "x": vertices[0].x,
                 "y": vertices[0].y,
@@ -101,7 +102,11 @@ def is_diagram_block(block):
 
     text = block["text"].strip()
 
-    # diagrams usually have very little text
+    # Block type 3 is PICTURE in Google Cloud Vision API
+    if block.get("type") == 3:
+        return True
+
+    # fallback heuristic: diagrams usually have very little text
     if len(text) < 20 and block["height"] > 100 and block["width"] > 100:
         return True
 

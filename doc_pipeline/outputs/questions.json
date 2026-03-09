@@ -1,1 +1,962 @@
-[]
+[
+  {
+    "question": "Who is the chief of Army Staff in June , 2024 ?",
+    "options": {
+      "A": "General Manoj Pande",
+      "B": "General Manoj M. Naravane",
+      "C": "General Dalbir Singh Suhag",
+      "D": "General Rakesh Kapoor"
+    },
+    "correct_answer": "A",
+    "chapter_id": "CURRENT AFFAIRS",
+    "diagram_present": false
+  },
+  {
+    "question": "Who is the president of Pakistan ?",
+    "options": {
+      "A": "Asif Ali Zardari",
+      "B": "Imran Khan",
+      "C": "Nawaz Sharif",
+      "D": "Shahbaz Sharif"
+    },
+    "correct_answer": "A",
+    "chapter_id": "CURRENT AFFAIRS",
+    "diagram_present": false
+  },
+  {
+    "question": "Where is India's largest facility for weightlifting coming up?",
+    "options": {
+      "A": "Ganjam",
+      "B": "Imphal",
+      "C": "New Delhi",
+      "D": "Bhubaneswar"
+    },
+    "correct_answer": "D",
+    "chapter_id": "sports",
+    "diagram_present": false
+  },
+  {
+    "question": "Who won the Best Actress award at Cannes Film Festival 2024 for acting in film 'The Shameless' (royal section)?",
+    "options": {
+      "A": "Kani Kusruthi",
+      "B": "Anasuya Sengupta",
+      "C": "Divya Prabha",
+      "D": "Chhaya Kadam"
+    },
+    "correct_answer": "B",
+    "chapter_id": "film-festivals",
+    "diagram_present": false
+  },
+  {
+    "question": "What is his name ?",
+    "options": {
+      "A": "Mohammad Shtayyeh",
+      "B": "Rami Hamdallan",
+      "C": "Salam Fayyad",
+      "D": "Yehia Sinwar"
+    },
+    "correct_answer": "A",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "In which field did he earn his fame?",
+    "options": {
+      "A": "Lawrence Wong",
+      "B": "Lee Kuan Yew",
+      "C": "Gok Chok Tong",
+      "D": "Lee Hsien Loong"
+    },
+    "correct_answer": "B",
+    "chapter_id": "biographies",
+    "diagram_present": false
+  },
+  {
+    "question": "In which field did she earn her fame?",
+    "options": {
+      "A": "Radio announcement",
+      "B": "Singing",
+      "C": "TV Anchor",
+      "D": "Film Director"
+    },
+    "correct_answer": "B",
+    "chapter_id": "introduction-to-the-course",
+    "diagram_present": false
+  },
+  {
+    "question": "Which of the following fields is NOT mentioned as a potential area of fame?",
+    "options": {
+      "A": "Literature",
+      "B": "Acting",
+      "C": "Painting",
+      "D": "Politics"
+    },
+    "correct_answer": "A",
+    "chapter_id": "introduction-to-the-course",
+    "diagram_present": false
+  },
+  {
+    "question": "Who is the Director of the film ?",
+    "options": {
+      "A": "Sanjay Leela Bhansali",
+      "B": "Payal Kapadia",
+      "C": "Mani Ratnam",
+      "D": "Anurag Basu"
+    },
+    "correct_answer": "B",
+    "chapter_id": "film_directors",
+    "diagram_present": true
+  },
+  {
+    "question": "Who is the current Chairman of Security and Exchange Board of India?",
+    "options": {
+      "A": "Madhabi Puri Buch",
+      "B": "V.K Sinha",
+      "C": "Ajay Tyagi",
+      "D": "C. B Bhave"
+    },
+    "correct_answer": "A",
+    "chapter_id": "governance",
+    "diagram_present": false
+  },
+  {
+    "question": "Which is India's largest Lok Sabha constituency in terms of voter population?",
+    "options": {
+      "A": "Malkajgiri",
+      "B": "Outer Delhi",
+      "C": "Agra",
+      "D": "Khurda"
+    },
+    "correct_answer": "B",
+    "chapter_id": "indian-politics",
+    "diagram_present": false
+  },
+  {
+    "question": "How many MLAs are elected for Odisha Legislative Assembly ?",
+    "options": {
+      "A": "137",
+      "B": "147",
+      "C": "157",
+      "D": "142"
+    },
+    "correct_answer": "B",
+    "chapter_id": "political_science",
+    "diagram_present": false
+  },
+  {
+    "question": "Who is the present Chief Minister of Goa?",
+    "options": {
+      "A": "Pramod Sawant",
+      "B": "Digambar Mamat",
+      "C": "Laxmikant Parsekar",
+      "D": "Francisco Sardinaa"
+    },
+    "correct_answer": "A",
+    "chapter_id": "current-affairs",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the name of Slovakia Prime Minister who was attacked in May 2024?",
+    "options": {
+      "A": "Turkey",
+      "B": "France",
+      "C": "Italy",
+      "D": "South Korea"
+    },
+    "correct_answer": "null",
+    "chapter_id": "current-affairs",
+    "diagram_present": false
+  },
+  {
+    "question": "Alejandra Rodriguez, a lawyer and journalist, recently won the title of Miss Universe Buenos Aires. What was her age at the time of winning the title?",
+    "options": {
+      "A": "27",
+      "B": "45",
+      "C": "25",
+      "D": "60"
+    },
+    "correct_answer": "A",
+    "chapter_id": "general_knowledge",
+    "diagram_present": false
+  },
+  {
+    "question": "Who is the Director General of CSIR and Secretary of DSIR?",
+    "options": {
+      "A": "Singing",
+      "B": "Sports",
+      "C": "Dance",
+      "D": "Literature"
+    },
+    "correct_answer": "A",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "In India Super League, whom did Odisha FC face in the semifinal in April 2024?",
+    "options": {
+      "A": "Mohan Bagan",
+      "B": "Mumbai City",
+      "C": "Kerala Blasters",
+      "D": "Jamshedpur FC"
+    },
+    "correct_answer": "A",
+    "chapter_id": "sports",
+    "diagram_present": false
+  },
+  {
+    "question": "Which of the following is a valid option for the year 2024?",
+    "options": {
+      "A": "Gulzar",
+      "B": "Rambhadracharya",
+      "C": "Both a & b",
+      "D": "None of the above"
+    },
+    "correct_answer": "D",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "Which of the following is a numerical value?",
+    "options": {
+      "A": "33236360",
+      "B": "733646762",
+      "C": "16850949",
+      "D": "32210723"
+    },
+    "correct_answer": "A",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "Which port has been conducted in Odisha?",
+    "options": {
+      "A": "Paradeep Port",
+      "B": "Kandhra Port",
+      "C": "Vizag Port",
+      "D": "JNPA Port"
+    },
+    "correct_answer": "A",
+    "chapter_id": "ports",
+    "diagram_present": false
+  },
+  {
+    "question": "How many phases were conducted?",
+    "options": {
+      "A": "3 Phases",
+      "B": "4 Phases",
+      "C": "5 Phases",
+      "D": "2 Phases"
+    },
+    "correct_answer": "B",
+    "chapter_id": "project_management",
+    "diagram_present": false
+  },
+  {
+    "question": "What is his name ?",
+    "options": {
+      "A": "Kyriakos Mitsotakis",
+      "B": "Alexis Tsipras",
+      "C": "Ioannis Sarmas",
+      "D": "Kostis Hatzidakis"
+    },
+    "correct_answer": "A",
+    "chapter_id": "general_knowledge",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the correct option?",
+    "options": {
+      "A": "2",
+      "B": "3",
+      "C": "4",
+      "D": "5"
+    },
+    "correct_answer": "A",
+    "chapter_id": "general_knowledge",
+    "diagram_present": false
+  },
+  {
+    "question": "Who did they defeat in the finals?",
+    "options": {
+      "A": "Mumbai Indians",
+      "B": "Sunrisers Hyderabad",
+      "C": "Royal Challengers Bengaluru",
+      "D": "Rajasthan Royals"
+    },
+    "correct_answer": "A",
+    "chapter_id": "data_interpretation",
+    "diagram_present": false
+  },
+  {
+    "question": "As per new initiative by ECI, senior citizens above certain age can vote from home. What is that age?",
+    "options": {
+      "A": "Above 80 years",
+      "B": "Above 85 years",
+      "C": "Above 75 years",
+      "D": "Above 82 years"
+    },
+    "correct_answer": "A",
+    "chapter_id": "geography",
+    "diagram_present": false
+  },
+  {
+    "question": "ECI has approved 12 alternative identity documents in place of Voter Identity Card for identity verification at Polling Booth. Which of the following is not one of them?",
+    "options": {
+      "A": "PAN Card",
+      "B": "AADHAR Card",
+      "C": "Credit Card",
+      "D": "Driving license"
+    },
+    "correct_answer": "C",
+    "chapter_id": "Economics",
+    "diagram_present": false
+  },
+  {
+    "question": "How many students study Geography or English?",
+    "options": {
+      "A": "108",
+      "B": "91",
+      "C": "62",
+      "D": "130"
+    },
+    "correct_answer": "D",
+    "chapter_id": "set-theory",
+    "diagram_present": false
+  },
+  {
+    "question": "How many students study Economics or Geography or both but not all three?",
+    "options": {
+      "A": "4",
+      "B": "28",
+      "C": "6",
+      "D": "54"
+    },
+    "correct_answer": "B",
+    "chapter_id": "set-theory",
+    "diagram_present": false
+  },
+  {
+    "question": "How many students study only Economics ?",
+    "options": {
+      "A": "15",
+      "B": "16",
+      "C": "17",
+      "D": "18"
+    },
+    "correct_answer": "A",
+    "chapter_id": "set-theory",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the ratio of profit earned by a car in a day to that earned by an Auto in a day ?",
+    "options": {
+      "A": "11 : 9",
+      "B": "2 : 1",
+      "C": "8 : 9",
+      "D": "13 : 9"
+    },
+    "correct_answer": "A",
+    "chapter_id": "ratios-and-proportions",
+    "diagram_present": false
+  },
+  {
+    "question": "Out of works A, B, C, D, which work a man takes most days to complete?",
+    "options": {
+      "A": "6 days",
+      "B": "4 days",
+      "C": "3 days",
+      "D": "Rs 5620"
+    },
+    "correct_answer": "A",
+    "chapter_id": "work-and-time",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the contribution of cars (approximately) to the total income per day in percentage?",
+    "options": {
+      "A": "68 %",
+      "B": "72 %",
+      "C": "75 %",
+      "D": "82 %"
+    },
+    "correct_answer": "C",
+    "chapter_id": "data_interpretation",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the total profit earned by all the Autos in the month of April ?",
+    "options": {
+      "A": "192,600",
+      "B": "162,900",
+      "C": "129,600",
+      "D": "169,200"
+    },
+    "correct_answer": "A",
+    "chapter_id": "profit_and_loss",
+    "diagram_present": false
+  },
+  {
+    "question": "If the income of the Company Q in 2000 was 10% less than its income in 2001 and the Company had earned a profit of 10 Lakhs in 2000, then what was its expenditure in 2000 (in Lakhs)?",
+    "options": {
+      "A": "28",
+      "B": "30",
+      "C": "32",
+      "D": "26"
+    },
+    "correct_answer": "A",
+    "chapter_id": "data_interpretation",
+    "diagram_present": false
+  },
+  {
+    "question": "What was the percentage profit / loss of the companies M and N taken together?",
+    "options": {
+      "A": "12% loss",
+      "B": "10% loss",
+      "C": "10% profit",
+      "D": "There was no loss or profit"
+    },
+    "correct_answer": "D",
+    "chapter_id": "profit_and_loss",
+    "diagram_present": true
+  },
+  {
+    "question": "Which company earned the maximum percentage profit in the year 2001?",
+    "options": {
+      "A": "M",
+      "B": "N",
+      "C": "Q",
+      "D": "P"
+    },
+    "correct_answer": "A",
+    "chapter_id": "profit-and-loss",
+    "diagram_present": false
+  },
+  {
+    "question": "If the total population of state Q is 2.4 million and that for the state T is 6 million, then what is the ratio of the total populations of the states Q and T?",
+    "options": {
+      "A": "1 : 3",
+      "B": "2 : 5",
+      "C": "3 : 1",
+      "D": "5 : 2"
+    },
+    "correct_answer": "B",
+    "chapter_id": "arithmetic_ratios_and_proportions",
+    "diagram_present": false
+  },
+  {
+    "question": "If the male population above poverty line for the state P is 12 million, then what is the total population of the state P?",
+    "options": {
+      "A": "40 million",
+      "B": "50 million",
+      "C": "60 million",
+      "D": "70 million"
+    },
+    "correct_answer": "C",
+    "chapter_id": "data_interpretation",
+    "diagram_present": false
+  },
+  {
+    "question": "Here are some words translated from an artificial language. 'dionot' means Oak tree, 'blyonot' means Oak leaf, 'blycrin' means Maple leaf. Which word could mean 'Maple Syrup'?",
+    "options": {
+      "A": "blymuth",
+      "B": "hupponot",
+      "C": "patricrin",
+      "D": "wellbly"
+    },
+    "correct_answer": "C",
+    "chapter_id": "LOGICAL REASONING",
+    "diagram_present": false
+  },
+  {
+    "question": "If the word ' EXAMINATION ' is coded as 56149512965 , then the word ' GOVERNMENT ' is coded as :",
+    "options": {
+      "A": "7645954552",
+      "B": "7654694562",
+      "C": "7645965426",
+      "D": "7654964526"
+    },
+    "correct_answer": "D",
+    "chapter_id": "coding-and-decoding",
+    "diagram_present": false
+  },
+  {
+    "question": "A clock strikes once at 1 o'clock, twice at 2 o'clock and so on. If it takes 6 seconds to strike at 3 o'clock, then in an entire day of 24 hours, how much time is spent on striking of the clock?",
+    "options": {
+      "A": "5 minutes 12 seconds",
+      "B": "4 minutes 6 seconds",
+      "C": "3 minutes 20 seconds",
+      "D": "5 minutes 32 seconds"
+    },
+    "correct_answer": "A",
+    "chapter_id": "arithmetic-progression",
+    "diagram_present": false
+  },
+  {
+    "question": "In the above question, what is the final value of X when the machine stops?",
+    "options": {
+      "A": "6",
+      "B": "102",
+      "C": "72",
+      "D": "360"
+    },
+    "correct_answer": "A",
+    "chapter_id": "arithmetic",
+    "diagram_present": false
+  },
+  {
+    "question": "In the above question, what is the value of X after Step 1?",
+    "options": {
+      "A": "4",
+      "B": "5",
+      "C": "6",
+      "D": "20"
+    },
+    "correct_answer": "A",
+    "chapter_id": "101",
+    "diagram_present": false
+  },
+  {
+    "question": "The left one is complete whereas one number is missing in the right one. Find a suitable number to fill in the place of the question mark.",
+    "options": {
+      "A": "280",
+      "B": "201",
+      "C": "4",
+      "D": "5"
+    },
+    "correct_answer": "A",
+    "chapter_id": "101",
+    "diagram_present": false
+  },
+  {
+    "question": "If the value of N is changed to 500, what would be the final value of X?",
+    "options": {
+      "A": "3160",
+      "B": "303",
+      "C": "362",
+      "D": "382"
+    },
+    "correct_answer": "D",
+    "chapter_id": "variables_and_data_types",
+    "diagram_present": false
+  },
+  {
+    "question": "Complete the series : CKDL , EKFL , GKHL , from the options given below .",
+    "options": {
+      "A": "IJKL",
+      "B": "MNOP",
+      "C": "MNPQ",
+      "D": "IKJL"
+    },
+    "correct_answer": "A",
+    "chapter_id": "sequences_and_series",
+    "diagram_present": true
+  },
+  {
+    "question": "The pair PAIN : SEDATIVE has certain relationship to each other . Select the pair which has the same relationship .",
+    "options": {
+      "A": "comfort : stimulant",
+      "B": "grief : consolation",
+      "C": "trance : narcotic",
+      "D": "ache : extraction"
+    },
+    "correct_answer": "B",
+    "chapter_id": "analogies",
+    "diagram_present": false
+  },
+  {
+    "question": "Pointing to a woman, a man said, \"Her father is the only son of my father.\" How is the man related to the woman?",
+    "options": {
+      "A": "Brother",
+      "B": "Grandfather",
+      "C": "Father",
+      "D": "Uncle"
+    },
+    "correct_answer": "C",
+    "chapter_id": "relationships",
+    "diagram_present": false
+  },
+  {
+    "question": "Arrange the following words in a meaningful sequence.",
+    "options": {
+      "A": "Cousin",
+      "B": "Daughter",
+      "C": "Mother",
+      "D": "Aunt"
+    },
+    "correct_answer": "B",
+    "chapter_id": "logical-reasoning",
+    "diagram_present": false
+  },
+  {
+    "question": "A man walks 5 km toward south and then turns to the right. After walking 3 km, he turns to the left and walks 5 km. Now, in which direction is he from the starting place?",
+    "options": {
+      "A": "South",
+      "B": "South - West",
+      "C": "North - East",
+      "D": "West"
+    },
+    "correct_answer": "B",
+    "chapter_id": "directions-and-distances",
+    "diagram_present": false
+  },
+  {
+    "question": "Pick the odd one out from the given pair of words.",
+    "options": {
+      "A": "Docile : Submissive",
+      "B": "Stringent : Flexible",
+      "C": "Steadfast : Irresolute",
+      "D": "Monotonous : Exciting"
+    },
+    "correct_answer": "A",
+    "chapter_id": "vocabulary",
+    "diagram_present": false
+  },
+  {
+    "question": "Choose the letter pair which is different from others in the group.",
+    "options": {
+      "A": "BD",
+      "B": "IK",
+      "C": "PN",
+      "D": "SU"
+    },
+    "correct_answer": "B",
+    "chapter_id": "analogy",
+    "diagram_present": false
+  },
+  {
+    "question": "Which day does Upen do his task ?",
+    "options": {
+      "A": "Friday",
+      "B": "Thursday",
+      "C": "Tuesday",
+      "D": "Monday"
+    },
+    "correct_answer": "B",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "0.04 is :",
+    "options": {
+      "A": "Mopping",
+      "B": "Laundry",
+      "C": "Sweeping",
+      "D": "Dusting"
+    },
+    "correct_answer": "C",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "Which day does Salman does his task ?",
+    "options": {
+      "A": "Friday",
+      "B": "Thursday",
+      "C": "Tuesday",
+      "D": "Monday"
+    },
+    "correct_answer": "D",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "The population of a town is decreasing at a rate of 10% per annum. If the population 2 years ago was 20,000, then what is the present population?",
+    "options": {
+      "A": "15,000",
+      "B": "15,200",
+      "C": "16,000",
+      "D": "16,200"
+    },
+    "correct_answer": "D",
+    "chapter_id": "ARITHMETIC",
+    "diagram_present": false
+  },
+  {
+    "question": "An increase of 20% each in two consecutive years is equal to a single increment of what percentage?",
+    "options": {
+      "A": "22 %",
+      "B": "32 %",
+      "C": "40 %",
+      "D": "44 %"
+    },
+    "correct_answer": "D",
+    "chapter_id": "percentage-and-its-applications",
+    "diagram_present": false
+  },
+  {
+    "question": "A certain amount of money was invested on simple interest at a certain rate for 2 years. If it had been invested at 4% higher rate, then it would have fetched Rs. 480 more. What is the amount of money invested?",
+    "options": {
+      "A": "Rs. 6,000",
+      "B": "Rs. 6,500",
+      "C": "Rs. 3,000",
+      "D": "Rs. 4,000"
+    },
+    "correct_answer": "A",
+    "chapter_id": "simple-interest",
+    "diagram_present": false
+  },
+  {
+    "question": "On lending a certain sum of money on compound interest, one gets Rs. 9050 in 2 years and Rs. 9500 in 3 years. What is the rate of interest (approximately)?",
+    "options": {
+      "A": "6 %",
+      "B": "5 %",
+      "C": "4 %",
+      "D": "3 %"
+    },
+    "correct_answer": "B",
+    "chapter_id": "compound-interest",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the value represented by 9.4 months?",
+    "options": {
+      "A": "15803",
+      "B": "18503",
+      "C": "13580",
+      "D": "10583"
+    },
+    "correct_answer": "A",
+    "chapter_id": null,
+    "diagram_present": false
+  },
+  {
+    "question": "The day on 5th April of a year will be the same day on 5th of which month of the same year?",
+    "options": {
+      "A": "5th June",
+      "B": "5th July",
+      "C": "5th August",
+      "D": "5th September"
+    },
+    "correct_answer": "B",
+    "chapter_id": "calendar-and-clock-problems",
+    "diagram_present": false
+  },
+  {
+    "question": "How many times the hands of a clock coincide in a day ( or 24 hours ) ?",
+    "options": {
+      "A": "24",
+      "B": "23",
+      "C": "22",
+      "D": "21"
+    },
+    "correct_answer": "B",
+    "chapter_id": "time_and_work",
+    "diagram_present": false
+  },
+  {
+    "question": "Sachin scored a century which included 3 fours and 8 sixes . As a result , what percentage of his total score did Sachin score by running between the wickets ?",
+    "options": {
+      "A": "30%",
+      "B": "34%",
+      "C": "38%",
+      "D": "66%"
+    },
+    "correct_answer": "D",
+    "chapter_id": "percentages",
+    "diagram_present": false
+  },
+  {
+    "question": "If xy, then the value of 15y - 7x is:",
+    "options": {
+      "A": "-32",
+      "B": "-56",
+      "C": "38",
+      "D": "74"
+    },
+    "correct_answer": "A",
+    "chapter_id": "algebra",
+    "diagram_present": false
+  },
+  {
+    "question": "IPv4 address is :",
+    "options": {
+      "A": "8 bit",
+      "B": "16 bit",
+      "C": "32 bit",
+      "D": "64 bit"
+    },
+    "correct_answer": "C",
+    "chapter_id": "networking_fundamentals",
+    "diagram_present": false
+  },
+  {
+    "question": "A bag contains Rs.410 in the form of Rs.5 , Rs.2 and Re.1 coins . If the number of coins is in the ratio 4 : 6 : 9 respectively , then what is the number of 2 rupees coins ?",
+    "options": {
+      "A": "40",
+      "B": "50",
+      "C": "60",
+      "D": "70"
+    },
+    "correct_answer": "C",
+    "chapter_id": "ratio-and-proportion",
+    "diagram_present": false
+  },
+  {
+    "question": "An identifier that sends and receives information across the Internet is called :",
+    "options": {
+      "A": "IP address",
+      "B": "www",
+      "C": "Network",
+      "D": "URL"
+    },
+    "correct_answer": "A",
+    "chapter_id": "networking",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the full form of NIC ?",
+    "options": {
+      "A": "Network Interconnection Card",
+      "B": "Network Internet Card",
+      "C": "Network Interface Card",
+      "D": "Network Intra Card"
+    },
+    "correct_answer": "C",
+    "chapter_id": "networking-basics",
+    "diagram_present": false
+  },
+  {
+    "question": "Which view allows to modify table's structure in Access?",
+    "options": {
+      "A": "Datasheet view",
+      "B": "Design view",
+      "C": "Pivot table view",
+      "D": "Pivot Chart view"
+    },
+    "correct_answer": "B",
+    "chapter_id": "access_views",
+    "diagram_present": false
+  },
+  {
+    "question": "Which key stroke moves the active cell towards left in Access table ?",
+    "options": {
+      "A": "F",
+      "B": "G",
+      "C": "H",
+      "D": "I"
+    },
+    "correct_answer": "A",
+    "chapter_id": "access-tables",
+    "diagram_present": false
+  },
+  {
+    "question": "The numerator of a fraction is 3 less than the denominator . If the numerator be made 3 times and 20 is added to the denominator , the fraction becomes \u00bd . What is the fraction ?",
+    "options": {
+      "A": "3/5",
+      "B": "5/8",
+      "C": "7/10",
+      "D": "9/12"
+    },
+    "correct_answer": "A",
+    "chapter_id": "algebra",
+    "diagram_present": false
+  },
+  {
+    "question": "What is the short cut key to highlight the entire column in Excel ?",
+    "options": {
+      "A": "Ctrl + C",
+      "B": "Ctrl + Enter",
+      "C": "Ctrl + Page Up",
+      "D": "Ctrl + Space Bar"
+    },
+    "correct_answer": "D",
+    "chapter_id": "excel_shortcuts",
+    "diagram_present": false
+  },
+  {
+    "question": "Which of the following is an example of Page Orientation?",
+    "options": {
+      "A": "Landscape",
+      "B": "Subscript",
+      "C": "Superscript",
+      "D": "A4"
+    },
+    "correct_answer": "A",
+    "chapter_id": "page-layout",
+    "diagram_present": false
+  },
+  {
+    "question": "You can Select all the text in MS Word document by :",
+    "options": {
+      "A": "Ctrl + S",
+      "B": "Ctrl + A",
+      "C": "Wizard",
+      "D": "AutoStyle"
+    },
+    "correct_answer": "B",
+    "chapter_id": "MS Word Basics",
+    "diagram_present": false
+  },
+  {
+    "question": "How can you apply exactly the same formatting you did to another text in MS-word?",
+    "options": {
+      "A": "Copy the text and paste in new location. Then type the new text again",
+      "B": "Copy the text and click on Paste Special tool in new place",
+      "C": "Select the text then click on Format Painter and select the new text",
+      "D": "Use the 'Styles' pane to apply the same style"
+    },
+    "correct_answer": "C",
+    "chapter_id": "MS Word Formatting",
+    "diagram_present": false
+  },
+  {
+    "question": "To view slides on one screen, use:",
+    "options": {
+      "A": "View Slide Sorter",
+      "B": "View Slide",
+      "C": "View Master",
+      "D": "View Slide Show"
+    },
+    "correct_answer": "A",
+    "chapter_id": "PowerPoint Views",
+    "diagram_present": false
+  },
+  {
+    "question": "To use your keyboard instead of the mouse to select tools on the ribbon, you display the KeyTips by pressing which key?",
+    "options": {
+      "A": "Alt",
+      "B": "Ctrl",
+      "C": "Shift + Enter",
+      "D": "Alt + Enter"
+    },
+    "correct_answer": "A",
+    "chapter_id": "keyboard-shortcuts",
+    "diagram_present": false
+  },
+  {
+    "question": "Which menu option is used to recolor a picture?",
+    "options": {
+      "A": "Insert -> Recolor",
+      "B": "Tools -> Picture -> Recolor",
+      "C": "Format -> Picture -> Recolor",
+      "D": "Edit -> Picture -> Recolor"
+    },
+    "correct_answer": "C",
+    "chapter_id": "image-editing",
+    "diagram_present": false
+  },
+  {
+    "question": "If you need to change the typeface of a document, which menu will you choose?",
+    "options": {
+      "A": "Edit",
+      "B": "View",
+      "C": "Format",
+      "D": "Tools"
+    },
+    "correct_answer": "C",
+    "chapter_id": "document_formatting",
+    "diagram_present": false
+  },
+  {
+    "question": "You can convert existing excel worksheet data and charts to an HTML document by using:",
+    "options": {
+      "A": "FTP wizard",
+      "B": "Internet assistant wizard",
+      "C": "Intranet wizard",
+      "D": "Import wizard"
+    },
+    "correct_answer": "B",
+    "chapter_id": "web_development",
+    "diagram_present": false
+  }
+]
