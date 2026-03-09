@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import supabase from "../utils/supabase";
 import { useState } from "react";
 import { StatusBanner } from "./ui/StatusBanner";
+import { Navigate, useNavigate } from "react-router";
 
 interface LoginProps {
   email: string;
@@ -12,6 +13,7 @@ interface LoginProps {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState<any>();
   const {
     register,
@@ -24,6 +26,9 @@ const Login = () => {
       password: info.password,
     });
     console.log("data", data);
+    if(data?.session){
+      navigate("/user/dashboard")
+    }
     if (error) {
       <StatusBanner status={error} />;
       // console.log(error.status)

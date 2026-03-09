@@ -4,8 +4,20 @@ import { Injectable } from '@nestjs/common';
 export interface Question {
   question: string;
   options: string[];
+pageNum?: number;
+  column?: 'left' | 'right';
+  pageContext?: string; 
   answer?: string; // optional, if answer is known
 }
+export interface ColumnResult {
+  pageNum: number;
+  leftColumn: Buffer;           // Left column image (Sharp PNG buffer)
+  rightColumn: Buffer;          // Right column image  
+  splitX: number;               // X position of column split (pixels)
+  confidence: number;           // Detection confidence (0.0 - 1.0)
+  imagePath: string;            // Source image path
+}
+
 
 @Injectable()
 export class QuestionService {
@@ -53,77 +65,201 @@ export class QuestionService {
 //     return questions;
 //   }
 
-// parseTextToQuestions(ocrText: string): Question[] {
-//     const lines = ocrText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-//     const questions: Question[] = [];
 
-//     let currentQ: Question = { question: '', options: [] };
 
-//    //options may a,b,c,d or A,B,C,D or roman thats why i have added this line..
-//      const optionRegex = /^(?:\(?[A-Da-d0-9]+\)?|i{1,3}|iv)\./;
 
-//     for (const line of lines) {
-//       // Detect question start: "Q1", "1.", etc.
-//       if (/^(Q\d+|[0-9]+\.)/.test(line)) {
-//         if (currentQ.question) questions.push(currentQ);
-//         currentQ = { question: line, options: [] };
-//       } else if (optionRegex.test(line)) {
-//         // Options like "A. option text"
-//         currentQ.options.push(line);
-//       } else {
-//         // Append line to current question if it’s part of the text
-//         currentQ.question += ' ' + line;
-//       }
-//     }
-
-//     // Push last question
-//     if (currentQ.question) questions.push(currentQ);
-
-//     return questions;
-//   }
-parseTextToQuestions(ocrText: string): Question[] {
-  // Step 1: Split lines, trim whitespace, remove empty lines
+parseTextToQuestions(ocrText: string, columns?: ColumnResult[]): Question[] {
   const lines = ocrText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
   const questions: Question[] = [];
 
   let currentQ: Question = { question: '', options: [] };
 
-  // Options may be a,b,c,d or A,B,C,D or Roman numerals i, ii, iii, iv
-  const optionRegex = /^(?:\(?[A-Da-d0-9]+\)?|i{1,3}|iv)\./;
-
-  // Detect a vertical column separator line
-  const columnLineRegex = /^\s*\|\s*$/;
+  const optionRegex = /^(?:\(?[A-Da-d1-4i]+\)?|[1-4]\.|i{1,3}|iv)\.?/i;
+//   const columnLineRegex = /^\s*\|\s*$/;
 
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
+    let line = lines[i].replace(/[|│┃¦]/g, '').trim();
 
-    // Step 2: Skip column separator lines
-    if (columnLineRegex.test(line)) {
-      // Merge previous line with next line if exists
-      if (i > 0 && i + 1 < lines.length) {
-        lines[i + 1] = lines[i - 1] + ' ' + lines[i + 1];
+    // if (columnLineRegex.test(line)) continue;
+
+    const pageContext = columns ? this.getPageContext(lines.slice(0, i).join('\n')) : '';
+
+    if (/^(Q?\d+|[0-9]+\.)/i.test(line)) {
+      if (currentQ.question) {
+        // ✅ FIXED: Explicit assignment
+        questions.push({
+          ...currentQ,
+          pageContext: currentQ.pageContext || pageContext  // Explicit initializer
+        });
       }
-      continue;
-    }
-
-    // Step 3: Detect question start (e.g., "Q1", "1.")
-    if (/^(Q\d+|[0-9]+\.)/.test(line)) {
-      if (currentQ.question) questions.push(currentQ);
-      currentQ = { question: line, options: [] };
-    } 
-    // Step 4: Detect options
-    else if (optionRegex.test(line)) {
+      currentQ = { 
+        question: line, 
+        options: [],
+        pageContext: pageContext  // ✅ Initialize here
+      };
+    } else if (optionRegex.test(line)) {
       currentQ.options.push(line);
-    } 
-    // Step 5: Append other lines to current question
-    else {
+    } else {
       currentQ.question += ' ' + line;
     }
   }
 
-  // Step 6: Push last question
-  if (currentQ.question) questions.push(currentQ);
+  // Final question
+  if (currentQ.question) {
+    questions.push({
+      ...currentQ,
+      pageContext: currentQ.pageContext || ''  // ✅ Explicit
+    });
+  }
 
   return questions;
 }
+// parseTextToQuestions(ocrText: string): Question[] {
+
+//   const lines = ocrText
+//     .split('\n')
+//     .map(l => l.trim())
+//     .filter(l => l.length > 0);
+
+//   const questions: Question[] = [];
+
+//   const questionRegex = /^\d+\./;
+//   const optionRegex = /^\[[A-D]\]/i;
+
+//   let currentQuestion: Question | null = null;
+
+//   for (const line of lines) {
+
+//     // New question
+//     if (questionRegex.test(line)) {
+
+//       if (currentQuestion) {
+//         questions.push(currentQuestion);
+//       }
+
+//       currentQuestion = {
+//         question: line,
+//         options: []
+//       };
+
+//       continue;
+//     }
+
+//     // Option line
+//     if (optionRegex.test(line)) {
+
+//       if (currentQuestion) {
+//         currentQuestion.options.push(line);
+//       }
+
+//       continue;
+//     }
+
+//     // Continue question text
+//     if (currentQuestion) {
+//       currentQuestion.question += " " + line;
+//     }
+
+//   }
+
+//   if (currentQuestion) {
+//     questions.push(currentQuestion);
+//   }
+
+//   return questions;
+// }
+
+private getPageContext(text: string): string {
+  const pageMatch = text.match(/--- PAGE (\d+) (LEFT|RIGHT) ---/i);
+  return pageMatch ? `Page ${pageMatch[1]} (${pageMatch[2]})` : '';
 }
+}
+// import { Injectable } from "@nestjs/common";
+
+// @Injectable()
+// export class QuestionService {
+
+//   parseTextToQuestions(text: string, columns?: any[]): any[] {
+
+//     if (!text) return [];
+
+//     // -----------------------------
+//     // STEP 1: Clean OCR garbage
+//     // -----------------------------
+//     let cleaned = text;
+
+//     cleaned = cleaned
+//       .replace(/--- PAGE \d+ LEFT ---/g, "\n")
+//       .replace(/--- PAGE \d+ RIGHT ---/g, "\n")
+//       .replace(/\r/g, "")
+//       .replace(/[|]/g, "")
+//       .replace(/[~`]/g, "")
+//       .replace(/\s+/g, " ")
+//       .replace(/\. /g, ".\n") // ensure question split
+//       .replace(/\(A\)/g, "\n(A)")
+//       .replace(/\(B\)/g, "\n(B)")
+//       .replace(/\(C\)/g, "\n(C)")
+//       .replace(/\(D\)/g, "\n(D)");
+
+//     // -----------------------------
+//     // STEP 2: Split Questions
+//     // -----------------------------
+//     const questionBlocks = cleaned.split(/\n(?=\d+\.)/);
+
+//     const questions = [];
+
+//     for (let block of questionBlocks) {
+
+//       block = block.trim();
+
+//       if (!block.match(/^\d+\./)) continue;
+
+//       const numberMatch = block.match(/^(\d+)\./);
+
+//       if (!numberMatch) continue;
+
+//       const questionNumber = parseInt(numberMatch[1]);
+
+//       // -----------------------------
+//       // Extract Question Text
+//       // -----------------------------
+//       const qTextMatch = block.match(/^\d+\.\s*(.*?)(?=\n\(A\))/s);
+
+//       if (!qTextMatch) continue;
+
+//       let questionText = qTextMatch[1]
+//         .replace(/\n/g, " ")
+//         .trim();
+
+//       // -----------------------------
+//       // Extract Options
+//       // -----------------------------
+//       const options = [];
+
+//       const optionRegex = /\((A|B|C|D)\)\s*([^()]+)/g;
+
+//       let match;
+
+//       while ((match = optionRegex.exec(block)) !== null) {
+
+//         const optionText = match[2]
+//           .replace(/\n/g, " ")
+//           .replace(/\s+/g, " ")
+//           .trim();
+
+//         options.push(optionText);
+//       }
+
+//       if (options.length === 0) continue;
+
+//       questions.push({
+//         questionNumber,
+//         question: questionText,
+//         options,
+//         pageContext: ""
+//       });
+//     }
+
+//     return questions;
+//   }
+// }

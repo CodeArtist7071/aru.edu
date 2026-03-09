@@ -1,104 +1,97 @@
-import { Injectable, Options } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import * as path from "path";
-import * as fs from "fs";
-import Tesseract from "tesseract.js";
-// import cvPromise from "@techstark/opencv-js";
-import { Jimp } from "jimp";
+// src/ocr/ocr.service.ts
+
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InferenceClient } from '@huggingface/inference';
+import { ConfigService } from '@nestjs/config';
+import sharp from 'sharp';
 
 @Injectable()
 export class OcrService {
-  private imagesDir: string;
-  private tessPath: string;
+  private hf: InferenceClient;
+
   constructor(private configService: ConfigService) {
-    const envDir = this.configService.get<string>("IMAGES_DIR");
-    this.imagesDir = path.join(process.cwd(), envDir || "src/uploads/images");
+    const token = "HF_API_TOKEN";
 
-    const tessPath =
-      this.configService.get<string>("TESSERACT_PATH") ||
-      "C:/Program Files/Tesseract-OCR/tessdata";
-    if (!tessPath) {
-      throw new Error("TESSERACT_PATH environment variable is required");
+    if (!token) {
+      throw new Error('HF_API_TOKEN is not set in environment variables');
     }
-    this.tessPath = tessPath;
-    if (!fs.existsSync(this.imagesDir))
-      fs.mkdirSync(this.imagesDir, { recursive: true });
+
+    this.hf = new InferenceClient(token);
   }
-//   private async initCv() {
-//     if (!this.cv) this.cv = cvPromise;
-//     return this.cv;
-//   }
 
-//   /** Preprocess image: grayscale, threshold, resize using Jimp + OpenCV */
-//   private async preprocessImage(filePath: string): Promise<Buffer> {
-//   // Load image with Jimp
-//   const image = await Jimp.read(filePath);
+  /**
+   * Convert Node.js Buffer → ArrayBuffer
+   * Required for imageToText API
+   */
+  private toArrayBuffer(buffer: Buffer): ArrayBuffer {
+    return buffer.buffer.slice(
+      buffer.byteOffset,
+      buffer.byteOffset + buffer.byteLength,
+    ) as ArrayBuffer;
+  }
 
-//   // Resize for better OCR (width ~1500px)
-//   image.resize({w:1500});
+  /**
+   * Convert Buffer → Blob
+   * Required for documentQuestionAnswering API
+   */
+  private toBlob(buffer: any): Blob {
+    return new Blob([buffer]);
+  }
 
-//   // Convert to grayscale
-//   image.greyscale();
+  /**
+   * Basic OCR (best for printed text)
+   */
+  async extractText(
+    imageBuffer: Buffer,
+    model = 'microsoft/trocr-large-printed',
+  ): Promise<string> {
+    try {
+      const result = await this.hf.imageToText({
+        model,
+        data: this.toArrayBuffer(imageBuffer),
+      });
 
-//   // Get raw RGBA buffer
-//   const { data, width, height } = image.bitmap;
+      return result?.generated_text?.trim() ?? '';
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : 'Unknown OCR error';
 
-//   // Create OpenCV Mat from raw buffer
-//   const mat = cv.matFromArray(height, width, cv.CV_8UC4, data);
-
-//   // Convert RGBA → Grayscale
-//   cv.cvtColor(mat, mat, cv.COLOR_RGBA2GRAY);
-
-//   // Threshold (binarization)
-//   cv.threshold(mat, mat, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
-
-//   // Optional: Resize again
-//   cv.resize(mat, mat, new cv.Size(1500, 0), 0, 0, cv.INTER_LINEAR);
-
-//   // Convert Mat back to buffer for Tesseract
-//   const processedBuffer = Buffer.from(mat.data);
-
-//   mat.delete();
-//   return processedBuffer;
-// }
-
-    private async preprocessImage(filePath: string) {
-      const image = await Jimp.read(filePath);
-      console.log("filePath....", filePath);
-      image.greyscale().contrast(0.5); // Overwrite
+      throw new BadRequestException(`OCR failed: ${message}`);
     }
-  async extractTextFromImages(pdfFolderName: string): Promise<string> {
-    const imagesDir = path.join(this.imagesDir, pdfFolderName);
-    const files = fs
-      .readdirSync(imagesDir)
-      .filter((f) => f.endsWith(".png"))
-      .sort();
+  }
 
-    let fullText = "";
+  /**
+   * Structured question extraction
+   * Uses VLM to extract questions from exam papers
+   */
+  async extractQuestionsStructured(
+    imageBuffer: Buffer,
+    model = 'Qwen/Qwen2.5-VL-7B-Instruct',
+  ): Promise<string> {
+    try {
+      // Optimize image before sending to inference API
+      const optimized = await sharp(imageBuffer)
+        .resize({ width: 1024, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 85 })
+        .toBuffer();
 
-    for (const file of files) {
-      const filePath = path.join(imagesDir, file);
-      console.log("OCR processing:", filePath);
+      const result = await this.hf.documentQuestionAnswering({
+        model,
+        inputs: {
+          image: this.toBlob(optimized),
+          question:
+            'Extract all exam questions. Ignore headers, instructions, and page numbers. Return a clean numbered list.',
+        },
+      });
 
-      try {
-        await this.preprocessImage(filePath); // Preprocess before OCR
-        const { data } = await Tesseract.recognize(filePath, "eng", {
-          logger: (m) => console.log(m),
-          langPath: this.tessPath,
-        });
+      return result?.answer?.trim() ?? 'No questions detected';
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Unknown structured OCR error';
 
-        // Remove garbage symbols
-        const cleanedText = data.text.replace(/[©§\[\]\*]/g, "").trim();
-        fullText += cleanedText + "\n";
-      } catch (err: any) {
-        console.warn(
-          `⚠️ Skipping image ${file} due to OCR error:`,
-          err.message,
-        );
-        continue; // skip this image and proceed
-      }
+      throw new BadRequestException(`Structured extraction failed: ${message}`);
     }
-
-    return fullText;
   }
 }
