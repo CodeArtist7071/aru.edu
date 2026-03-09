@@ -46,7 +46,7 @@ export default function UserPanelLayout() {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleLogout = () => {
-    const { error } = supabase.auth.signOut();
+    const { error }:any = supabase.auth.signOut();
     if (error) {
       console.log("Logout Error", error);
     }
