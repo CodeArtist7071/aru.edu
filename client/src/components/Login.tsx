@@ -57,25 +57,23 @@ const Login = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginProps>();
-  const onSubmit = async (info: LoginProps) => {
-    setLoading(true);
+const onSubmit = async (info: LoginProps) => {
+  setLoading(true);
+  setError(null); // clear previous errors
+
+  try {
+    // Sign in with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email: info.email,
       password: info.password,
     });
-    console.log("data", data);
-    if(data?.session){
-      navigate("/user/dashboard")
-    }
+
     if (error) {
-      <StatusBanner status={error} />;
-      console.log("error",error)
-      // console.log(error.status)
+      // Show error banner
+      console.log("Login error:", error);
       setError(error);
       return;
     }
-    setLoading(false);
-  };
 if(loading){
   
 }

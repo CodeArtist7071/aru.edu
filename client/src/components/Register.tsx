@@ -41,25 +41,28 @@ const Register = () => {
 
   const passwordMatch = confirmPassword && password === confirmPassword;
 
-  async function onSubmit(details:RegisterProps) {
-    console.log("details",details)
-   const {data,error} = await supabase.auth.signUp({
-    email:details.email,
-    phone:details.phone,
-    password:details.confirm_password,
-    // options:{
-    //   emailRedirectTo:"/user/dashboard",
-    // }
-   })
-   if(data.user?.aud === "authenticated"){
-     navigate('/user/dashboard');
-   }
-   console.log(data);
-   setUserData(data.user)
-   if(error){
-    console.log(error)
-   }
-  }
+async function onSubmit(details: RegisterProps) {
+  console.log("details", details);
+
+  try {
+    const { data, error } = await supabase.auth.signUp(
+      {
+        email: details.email,
+        phone: details.phone,        // optional, only if you use phone auth
+        password: details.confirm_password,
+        options:{
+         emailRedirectTo: "https://codeartist7071.github.io/#/login",
+         data:{email:details.email},
+         
+        }
+      }
+    );
+
+    if (error) {
+      console.log("Signup error:", error);
+      setError(error);
+      return;
+    }
 
   return (
     <div className="bg-background-light container dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
