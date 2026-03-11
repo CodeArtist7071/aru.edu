@@ -45,7 +45,16 @@ def push_english(data, subject_id, exam_id):
         payload.pop("question_number", None)
         payload.pop("diagram_note", None)
 
-        supabase.table("questions").insert(payload).execute()
+        try:
+            # Upsert using 'question' as the conflict key (since there is a unique constraint on it)
+            # If your table doesn't support ON CONFLICT easily from the python SDK, we catch the APIError
+            supabase.table("questions").upsert(payload, on_conflict="question").execute()
+            print(f"✓ Pushed: {q.get('question_number', '?')}")
+        except Exception as e:
+            if "already exists" in str(e):
+                print(f"⚠ Skipped duplicate: {q.get('question', '')[:50]}...")
+            else:
+                print(f"✗ Failed to push Q{q.get('question_number', '?')}: {e}")
 
 
 

@@ -4,7 +4,7 @@ import re
 import os
 import subprocess
 from services.chunk_processor import chunk_questions
-from config import REGION, PROJECT_ID, MODEL_ID, SUPABASE_KEY, SUPABASE_URL
+from config import REGION, PROJECT_ID, SUPABASE_KEY, SUPABASE_URL
 import re
 from supabase import create_client, Client
 
@@ -208,19 +208,32 @@ def regex_extract_questions(text):
 
     for m in matches:
 
+        # q = {
+        #     "question_number": int(m[0]),
+        #     "question": m[1].strip(),
+        #     "options": {
+        #         "A": m[2].strip(),
+        #         "B": m[3].strip(),
+        #         "C": m[4].strip(),
+        #         "D": m[5].strip()
+        #     },
+        #     "correct_answer": "",
+        #     "linked_questions": [],
+        #     "appear_year": None
+        # }
         q = {
-            "question_number": int(m[0]),
-            "question": m[1].strip(),
-            "options": {
-                "A": m[2].strip(),
-                "B": m[3].strip(),
-                "C": m[4].strip(),
-                "D": m[5].strip()
-            },
-            "correct_answer": "",
-            "linked_questions": [],
-            "appear_year": None
-        }
+    "question_number": int(m[0]),
+    "question": m[1].strip(),
+    "options": [
+        {"label": "A", "value": m[2].strip()},
+        {"label": "B", "value": m[3].strip()},
+        {"label": "C", "value": m[4].strip()},
+        {"label": "D", "value": m[5].strip()}
+    ],
+    "correct_answer": "",
+    "linked_questions": [],
+    "appear_year": None
+}
 
         questions.append(q)
 
