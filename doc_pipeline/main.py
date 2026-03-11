@@ -10,6 +10,7 @@ from services.drive_service import download_pdfs
 from services.supabase_push import detect_exam_name, detect_subject_name, push_english, resolve_exam_subject_ids
 from services.quota_manager import check_vision_quota, check_gemini_quota
 from services.chapter_mapper import find_chapter_id
+from services.question_finetuner import finetune_questions
 
 from config import ENABLE_ODIA_TRANSLATION
 
@@ -37,10 +38,45 @@ def load_status():
         return json.load(f)
 
 
-def save_status(status):
-
+def save_status(data):
     with open(STATUS_FILE, "w") as f:
-        json.dump(status, f, indent=2)
+        json.dump(data, f, indent=2)
+
+
+# --------------------------------
+# CHECKPOINT MANAGEMENT
+# --------------------------------
+
+def _checkpoint_path(pdf_stem: str) -> str:
+    return os.path.join("outputs", f"{pdf_stem}_checkpoint.json")
+
+
+def load_checkpoint(pdf_stem: str) -> dict:
+    """Load existing checkpoint or return a fresh one with all stages pending."""
+    path = _checkpoint_path(pdf_stem)
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                cp = json.load(f)
+            log(f"[CHECKPOINT] Loaded checkpoint for '{pdf_stem}'")
+            return cp
+        except Exception:
+            pass
+    return {
+        "pdf_name": pdf_stem,
+        "ocr_parse_done": False,
+        "chapter_mapping_done": False,
+        "finetuned_done": False,
+    }
+
+
+def save_checkpoint(pdf_stem: str, cp: dict) -> None:
+    """Persist the checkpoint to disk."""
+    os.makedirs("outputs", exist_ok=True)
+    path = _checkpoint_path(pdf_stem)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(cp, f, indent=2)
+    log(f"[CHECKPOINT] Saved checkpoint for '{pdf_stem}'")
 
 
 # -------------------------------
@@ -222,15 +258,34 @@ def process_pdf(pdf_path):
     output_json_path = os.path.join("outputs", f"{pdf_stem}.json")
     log(f"Output JSON will be saved as: {output_json_path}")
 
+    # Load checkpoint
+    cp = load_checkpoint(pdf_stem)
+    log(f"[CHECKPOINT] Status: OCR/Parse={'DONE' if cp['ocr_parse_done'] else 'PENDING'} | "
+        f"ChapterMap={'DONE' if cp['chapter_mapping_done'] else 'PENDING'} | "
+        f"Finetune={'DONE' if cp['finetuned_done'] else 'PENDING'}")
+
     all_questions = []
     debug_text = ""
     global_exam_id = None
     current_subject_id = None
 
     # --------------------------
-    # PAGE LOOP
+    # GATE 1+2: OCR + PARSE
     # --------------------------
-    for i, img in enumerate(images):
+    if cp["ocr_parse_done"] and os.path.exists(output_json_path):
+        log("[CHECKPOINT] ✓ OCR+Parse already done — loading cached questions")
+        with open(output_json_path, encoding="utf-8") as f:
+            all_questions = json.load(f)
+        log(f"[CHECKPOINT] Loaded {len(all_questions)} cached questions")
+        # Restore exam/subject IDs from the cached questions
+        for q in all_questions:
+            if not global_exam_id and q.get("exam_id"):
+                global_exam_id = q["exam_id"]
+            if not current_subject_id and q.get("subject_id"):
+                current_subject_id = q["subject_id"]
+        log(f"[CHECKPOINT] Restored exam_id={global_exam_id} subject_id={current_subject_id}")
+    else:
+        log("[CHECKPOINT] Running OCR + Parse ...")
 
         log("--------------------------------------------------")
         log(f"Processing page {i+1}/{len(images)}")
@@ -371,53 +426,54 @@ def process_pdf(pdf_path):
 
             log(f"OCR error on page {i+1}: {e}")
 
-    log("--------------------------------------------------")
-    log("OCR processing completed")
+        log("--------------------------------------------------")
+        log("OCR processing completed")
 
-    # --------------------------
-    # SAVE DEBUG TEXT
-    # --------------------------
-    log("Saving clustered OCR text for debugging")
+        # --------------------------
+        # SAVE DEBUG TEXT
+        # --------------------------
+        log("Saving clustered OCR text for debugging")
 
-    os.makedirs("outputs", exist_ok=True)
+        os.makedirs("outputs", exist_ok=True)
 
-    with open("outputs/raw_text.txt", "w", encoding="utf-8") as f:
-        f.write(debug_text)
+        with open("outputs/raw_text.txt", "w", encoding="utf-8") as f:
+            f.write(debug_text)
 
-    log("Saved OCR text to outputs/raw_text.txt")
-    log(f"Total debug text length: {len(debug_text)} characters")
+        log("Saved OCR text to outputs/raw_text.txt")
+        log(f"Total debug text length: {len(debug_text)} characters")
 
-    # --------------------------
-    # VALIDATE OUTPUT
-    # --------------------------
-    log("Validating parsed question list")
+        # --------------------------
+        # VALIDATE OUTPUT
+        # --------------------------
+        log("Validating parsed question list")
 
-    if not isinstance(all_questions, list):
+        if not isinstance(all_questions, list):
+            log("Invalid JSON output from parser")
+            return
 
-        log("Invalid JSON output from parser")
-        return
+        log(f"Total questions extracted: {len(all_questions)}")
 
-    log(f"Total questions extracted: {len(all_questions)}")
+        # --------------------------
+        # DIAGRAM & LINKED METADATA PROPAGATION
+        # --------------------------
+        log("Propagating diagrams for linked questions")
+        q_map = {}
+        for q in all_questions:
+            q_num = q.get("question_number")
+            if q_num is not None:
+                try:
+                    q_map[int(q_num)] = q
+                except ValueError:
+                    pass
 
-    # --------------------------
-    # DIAGRAM & LINKED METADATA PROPAGATION
-    # --------------------------
-    log("Propagating diagrams for linked questions")
-    
-    # Map questions by integer question_number
-    q_map = {}
-    for q in all_questions:
-        q_num = q.get("question_number")
-        if q_num is not None:
-            try:
-                q_map[int(q_num)] = q
-            except ValueError:
-                pass
+            if "linked_questions" not in q:
+                q["linked_questions"] = []
+            if "appear_year" not in q:
+                q["appear_year"] = None
 
-        if "linked_questions" not in q:
-            q["linked_questions"] = []
-        if "appear_year" not in q:
-            q["appear_year"] = None
+    # Ensure q_map exists for both cached and fresh paths
+    if "q_map" not in dir():
+        q_map = {q.get("question_number"): q for q in all_questions if q.get("question_number") is not None}
 
     processed_groups = set()
     for q in all_questions:
@@ -455,30 +511,55 @@ def process_pdf(pdf_path):
                             q_map[num]["diagram_present"] = True
                             q_map[num]["diagram_url"] = group_diagram_url
                             log(f"Propagated diagram to question {num} from linked group")
-    # --------------------------
-    # CHAPTER MAPPING
-    # --------------------------
-    log("Running chapter mapping via embeddings ...")
-    for q in all_questions:
-        q_text = q.get("question", "") or q.get("question_text", "") or ""
-        q_subject_id = q.get("subject_id") or current_subject_id
-        if q_subject_id and q_text:
-            chapter_id = find_chapter_id(q_text, q_subject_id)
-            q["chapter_id"] = chapter_id
-            if chapter_id:
-                log(f"Q{q.get('question_number')} -> chapter_id: {chapter_id}")
-        else:
-            q.setdefault("chapter_id", None)
-    log("Chapter mapping complete")
 
-    # SAVE QUESTIONS JSON
-    # --------------------------
-    log("Saving questions JSON")
-
+    # Save raw JSON + mark OCR/parse done (ONCE, after the full for-q loop)
     with open(output_json_path, "w", encoding="utf-8") as f:
         json.dump(all_questions, f, indent=2)
-
     log(f"Questions saved to {output_json_path}")
+    cp["ocr_parse_done"] = True
+    save_checkpoint(pdf_stem, cp)
+
+    # --------------------------
+    # GATE 3: CHAPTER MAPPING
+    # --------------------------
+    all_have_chapter = all(q.get("chapter_id") for q in all_questions)
+    if cp["chapter_mapping_done"] and all_have_chapter:
+        log("[CHECKPOINT] ✓ Chapter mapping already done — skipping embeddings")
+    else:
+        log("[CHECKPOINT] Running chapter mapping via embeddings ...")
+        for q in all_questions:
+            q_text = q.get("question", "") or q.get("question_text", "") or ""
+            q_subject_id = q.get("subject_id") or current_subject_id
+            if q_subject_id and q_text:
+                chapter_id = find_chapter_id(q_text, q_subject_id)
+                q["chapter_id"] = chapter_id
+                if chapter_id:
+                    log(f"Q{q.get('question_number')} -> chapter_id: {chapter_id}")
+            else:
+                q.setdefault("chapter_id", None)
+        log("Chapter mapping complete")
+
+        # Overwrite JSON with chapter_ids populated
+        with open(output_json_path, "w", encoding="utf-8") as f:
+            json.dump(all_questions, f, indent=2)
+        log(f"Questions (with chapters) saved to {output_json_path}")
+        cp["chapter_mapping_done"] = True
+        save_checkpoint(pdf_stem, cp)
+
+    # --------------------------
+    # GATE 4: FINE-TUNE
+    # --------------------------
+    finetuned_path = os.path.join("outputs", f"{pdf_stem}_finetuned.json")
+    if cp["finetuned_done"] and os.path.exists(finetuned_path):
+        log("[CHECKPOINT] ✓ Fine-tuning already done — skipping Gemini cleaning")
+    else:
+        log("[CHECKPOINT] Fine-tuning questions via Gemini (cleaning OCR noise) ...")
+        finetuned_questions = finetune_questions(all_questions)
+        with open(finetuned_path, "w", encoding="utf-8") as f:
+            json.dump(finetuned_questions, f, indent=2, ensure_ascii=False)
+        log(f"Fine-tuned questions saved to {finetuned_path}")
+        cp["finetuned_done"] = True
+        save_checkpoint(pdf_stem, cp)
 
     # --------------------------
     # SUPABASE PUSH
@@ -486,22 +567,15 @@ def process_pdf(pdf_path):
     log(f"Final Detected Exam ID: {global_exam_id}")
     log(f"Final Detected Subject ID: {current_subject_id}")
 
-    if not global_exam_id or not current_subject_id:
-        log("Exam or subject detection failed. Skipping Supabase push.")
-        return
-    else:
-        log("Questions contain fully mapped subject_id, exam_id, and chapter_id.")
-        # push_english(all_questions, current_subject_id, global_exam_id)
-        pass
+    if not global_exam_id and not current_subject_id:
+        log("WARNING: No exam_id or subject_id detected — questions with missing IDs will be skipped during push")
 
     # --------------------------
     # PUSH TO SUPABASE
     # --------------------------
-    log("Pushing English questions to Supabase")
-
-    push_english(all_questions, current_subject_id, global_exam_id)
-
-    log("English questions pushed successfully")
+    log("Pushing questions to Supabase ...")
+    push_english(all_questions, fallback_subject_id=current_subject_id, fallback_exam_id=global_exam_id)
+    log("Supabase push complete")
 
     # --------------------------
     # ODIA TRANSLATION
