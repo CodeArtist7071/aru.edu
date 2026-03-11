@@ -4,7 +4,7 @@ import re
 import os
 import subprocess
 from services.chunk_processor import chunk_questions
-from config import REGION, PROJECT_ID, MODEL_ID, SUPABASE_KEY, SUPABASE_URL
+from config import REGION, PROJECT_ID, SUPABASE_KEY, SUPABASE_URL
 import re
 from supabase import create_client, Client
 

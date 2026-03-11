@@ -11,7 +11,7 @@ def get_subjects():
     global _SUBJECTS_CACHE
     if _SUBJECTS_CACHE is None:
         print("[TRACKER] Fetching subjects from Supabase...")
-        res = supabase.table("subjects").select("id,name").execute()
+        res = supabase.table("subjects").select("id,name,description").execute()
         _SUBJECTS_CACHE = res.data
     return _SUBJECTS_CACHE
 
@@ -45,9 +45,12 @@ def match_subject_id(block_text):
         
     subjects = get_subjects()
     text_clean = block_text.strip().lower()
-    
-    # Strip leading numerals or bullets (e.g., "IV. Logical Reasoning" -> "logical reasoning")
-    text_clean = re.sub(r'^([ivxlcdm]+|[a-z]|\d+)[\.\)\-\:]\s*', '', text_clean)
+
+    # Broaden regex: Remove numbering tags like "IV.", "A.", "1.", and trailing numbers "( 67 )"
+    # Strip leading bullets
+    text_clean = re.sub(r'^([ivxlcdm]+|[a-z]|\d+)[\.\)\-\:]\s+', '', text_clean)
+    # Strip trailing numbers in brackets like " ( 67 )" or "(67)"
+    text_clean = re.sub(r'\(\s*\d+\s*\)$', '', text_clean)
     text_clean = text_clean.strip()
 
     if not text_clean:
@@ -55,10 +58,17 @@ def match_subject_id(block_text):
         
     for subject in subjects:
         subj_clean = subject["name"].strip().lower()
-        # Direct exact or substring match case-insensitive
+        desc_clean = (subject.get("description") or "").strip().lower()
+        
+        # Direct exact or substring match case-insensitive against name
         if subj_clean == text_clean or subj_clean in text_clean:
             # We found a match!
-            print(f"[TRACKER] Matched Heading '{block_text.strip()}' -> Subject: {subject['name']}")
+            print(f"[TRACKER] Matched Heading '{block_text.strip()}' -> Subject Name: {subject['name']}")
+            return subject["id"]
+            
+        # Match case-insensitive against description aliases
+        if desc_clean and text_clean in desc_clean:
+            print(f"[TRACKER] Matched Heading '{block_text.strip()}' -> Subject Description Alias: {subject['name']}")
             return subject["id"]
             
     return None

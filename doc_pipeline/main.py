@@ -9,6 +9,7 @@ from services.ocr_service import attach_diagrams_to_clusters, blocks_to_text, cl
 from services.drive_service import download_pdfs
 from services.supabase_push import detect_exam_name, detect_subject_name, push_english, resolve_exam_subject_ids
 from services.quota_manager import check_vision_quota, check_gemini_quota
+from services.chapter_mapper import find_chapter_id
 
 from config import ENABLE_ODIA_TRANSLATION
 
@@ -215,6 +216,11 @@ def process_pdf(pdf_path):
     images = split_pdf(pdf_path)
 
     log(f"PDF split complete. Total pages detected: {len(images)}")
+
+    # Derive output filename from the PDF name (e.g. 'exam-2024.pdf' -> 'exam-2024.json')
+    pdf_stem = os.path.splitext(os.path.basename(pdf_path))[0]
+    output_json_path = os.path.join("outputs", f"{pdf_stem}.json")
+    log(f"Output JSON will be saved as: {output_json_path}")
 
     all_questions = []
     debug_text = ""
@@ -449,14 +455,30 @@ def process_pdf(pdf_path):
                             q_map[num]["diagram_present"] = True
                             q_map[num]["diagram_url"] = group_diagram_url
                             log(f"Propagated diagram to question {num} from linked group")
+    # --------------------------
+    # CHAPTER MAPPING
+    # --------------------------
+    log("Running chapter mapping via embeddings ...")
+    for q in all_questions:
+        q_text = q.get("question", "") or q.get("question_text", "") or ""
+        q_subject_id = q.get("subject_id") or current_subject_id
+        if q_subject_id and q_text:
+            chapter_id = find_chapter_id(q_text, q_subject_id)
+            q["chapter_id"] = chapter_id
+            if chapter_id:
+                log(f"Q{q.get('question_number')} -> chapter_id: {chapter_id}")
+        else:
+            q.setdefault("chapter_id", None)
+    log("Chapter mapping complete")
+
     # SAVE QUESTIONS JSON
     # --------------------------
     log("Saving questions JSON")
 
-    with open("outputs/questions.json", "w", encoding="utf-8") as f:
+    with open(output_json_path, "w", encoding="utf-8") as f:
         json.dump(all_questions, f, indent=2)
 
-    log("Questions saved to outputs/questions.json")
+    log(f"Questions saved to {output_json_path}")
 
     # --------------------------
     # SUPABASE PUSH
